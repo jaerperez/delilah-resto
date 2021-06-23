@@ -8,8 +8,8 @@ Rol.init({
 { 
     sequelize,
     modelName: "rol",
-    tableName: "rols",
+    tableName: "roles",
     timestamps: false
 })
 
-module.exports = Rols;
+module.exports = Rol;

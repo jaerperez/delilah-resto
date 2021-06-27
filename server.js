@@ -8,9 +8,10 @@ const jwt = require("jsonwebtoken");
 //como se guarda en variables de entorno
 const secretJWT = "escribiralgomuyseguro1234-lbjnwef89h234234rbhjui";
 const db = require('./database');
+require('./database/models/asociations');
 
 const server = express();
-const PORT = 3001;
+const PORT = 3003;
 // instanciar modelos
 const Producto = require('./database/models/Producto');
 const Pedido = require('./database/models/Pedido');
@@ -27,7 +28,7 @@ server.use(
     secret: secretJWT,
     algorithms: ["HS256"],
   }).unless({
-    path: ["/login", "/producto_nuevo", "/productos", "/producto_act/:id"],
+    path: ["/login","/register","/usuarios"]
   })
 );
 
@@ -47,7 +48,6 @@ const validarBodyProducto = (req, res, next) => {
     next();
   }
 }
-
 
 // POST Crear un nuevo producto
 server.post('/producto_nuevo', validarBodyProducto, (req, res) => {
@@ -94,7 +94,7 @@ const validarBodyLogin = (req, res, next) => {
     !req.body.contrasena
   ) {
     res.status(400).json({
-      error: "debe loguearse con su correo y contraseña",
+      error: "Debe loguearse con su correo y contraseña",
     });
   } else {
     next();
@@ -121,15 +121,14 @@ const verificarLogin = async (req, res, next) => {
 
 
 // validación body register
-const validarBodyRegister = (req, res, next) => {
+/*const validarBodyRegister = (req, res, next) => {
   if (
     !req.body.usuario ||
     !req.body.nombre ||
     !req.body.correo ||
     !req.body.telefono ||
     !req.body.direccion ||
-    !req.body.contrasena ||
-    !req.body.rols_id
+    !req.body.contrasena
   ) {
     res.status(400).json({
       error: "debe registrarse con los datos completos",
@@ -137,7 +136,7 @@ const validarBodyRegister = (req, res, next) => {
   } else {
     next();
   }
-};
+};*/
 
 // validación de usuario en DB (validar nombre y mail por separado)
 const validarUsuarioNombre = async (req, res, next) => {
@@ -169,23 +168,6 @@ const validarUsuarioCorreo = async (req, res, next) => {
 }
 
 
-server.post('/register', validarBodyRegister, validarUsuarioCorreo, validarUsuarioNombre, (req, res) => {
-  Usuario.create({
-      usuario: req.body.usuario,
-      nombre:req.body.nombre,
-      correo: req.body.correo,
-      telefono: req.body.telefono,
-      direccion:req.body.direccion,
-      contrasena: req.body.contrasena,
-      rols_id:req.body.rols_id
-  }).then(usuario => {
-      res.status(200).json({ usuario });
-  }).catch(error => {
-      res.status(400).json({ error: error.message });
-  });
-})
-
-
 server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
   const token = jwt.sign(
       {
@@ -200,13 +182,39 @@ server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
 
 
 
-// GET USUARIOS
+// GET Usuarios
 server.get('/usuarios', (req, res) => {
-  Usuario.findAll().then(usuarios => {
+  Usuario.findAll(
+    {
+      include:[{
+        model:Roles,
+        as:"permiso",
+        attributes:[
+          'id','nombre'
+        ]
+      }],
+      attributes:['id','usuario','nombre','correo','telefono','direccion']
+    }
+  ).then(usuarios => {
       res.json(usuarios);
   }).catch(error => {
       res.send(error.message);
   })
+})
+
+server.post('/register', validarUsuarioCorreo, validarUsuarioNombre, (req, res) => {
+  Usuario.create({
+      usuario: req.body.usuario,
+      nombre:req.body.nombre,
+      correo: req.body.correo,
+      telefono: req.body.telefono,
+      direccion:req.body.direccion,
+      contrasena: req.body.contrasena
+  }).then(usuario => {
+      res.status(200).json({ usuario });
+  }).catch(error => {
+      res.status(400).json({ error: error.message });
+  });
 })
 
 //=============================================Fin endpoint Usuarios===================================== 
@@ -218,7 +226,7 @@ server.listen(PORT, () => {
 
   // Conectarse a la base de datos cuando levanta el servidor
   // force true: DROP TABLES (no queremos que reinicie las tablas constantemente!)
-  db.sync({ force: false }).then(() => {
+  db.sync({ force: true}).then(() => {
     console.log("Succesfully connected to database");
   }).catch(error => {
     console.log("Se ha producido un error: " + error);

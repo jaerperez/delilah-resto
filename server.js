@@ -8,10 +8,10 @@ const jwt = require("jsonwebtoken");
 //como se guarda en variables de entorno
 const secretJWT = "escribiralgomuyseguro1234-lbjnwef89h234234rbhjui";
 const db = require('./database');
-require('./database/models/asociations');
+require('./database/asociations');
 
 const server = express();
-const PORT = 3003;
+const PORT = 3000;
 // instanciar modelos
 const Producto = require('./database/models/Producto');
 const Pedido = require('./database/models/Pedido');
@@ -28,7 +28,7 @@ server.use(
     secret: secretJWT,
     algorithms: ["HS256"],
   }).unless({
-    path: ["/login","/register","/usuarios"]
+    path: ["/login", "/register"]
   })
 );
 
@@ -57,7 +57,7 @@ server.post('/producto_nuevo', validarBodyProducto, (req, res) => {
     activo: req.body.activo,
     imagen: req.body.imagen
   }).then(producto => {
-    res.status(200).json({ producto });
+    res.status(200).json({producto});
   }).catch(error => {
     res.status(400).json({ error: error.message });
   })
@@ -73,16 +73,19 @@ server.get('/productos', (req, res) => {
 })
 
 //Actualizar producto
-server.put('/producto_act/:id', (req, res) => {
-  Producto.forEach((producto) => {
-    if (producto.id == req.params.id) {
-      producto.nombre = req.body.nombre;
-      producto.precio = req.body.precio;
-      producto.activo = req.body.activo;
-      producto.imagen = req.body.imagen;
-    }
-  });
-  res.status(200).json({});
+server.put('/productos/:id', (req, res) => {
+  Producto.update({
+    nombre: req.body.nombre,
+    precio: req.body.precio,
+    activo: req.body.activo,
+    imagen: req.body.imagen
+  },{
+    where: { id: req.params.id }
+  }).then(product => {
+    res.status(200).json({product});
+  }).catch(error => {
+    res.send(error.message);
+  })
 });
 
 //====================Usuarios ================//
@@ -119,25 +122,6 @@ const verificarLogin = async (req, res, next) => {
   }
 };
 
-
-// validación body register
-/*const validarBodyRegister = (req, res, next) => {
-  if (
-    !req.body.usuario ||
-    !req.body.nombre ||
-    !req.body.correo ||
-    !req.body.telefono ||
-    !req.body.direccion ||
-    !req.body.contrasena
-  ) {
-    res.status(400).json({
-      error: "debe registrarse con los datos completos",
-    });
-  } else {
-    next();
-  }
-};*/
-
 // validación de usuario en DB (validar nombre y mail por separado)
 const validarUsuarioNombre = async (req, res, next) => {
   const usuarioExistente = await Usuario.findOne({
@@ -170,12 +154,12 @@ const validarUsuarioCorreo = async (req, res, next) => {
 
 server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
   const token = jwt.sign(
-      {
-          usuario: req.body.usuario,
-          correo: req.body.correo,
-      },
-      secretJWT,
-      { expiresIn: "60m" }
+    {
+      usuario: req.body.usuario,
+      correo: req.body.correo,
+    },
+    secretJWT,
+    { expiresIn: "60m" }
   );
   res.status(200).json({ token });
 });
@@ -186,38 +170,61 @@ server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
 server.get('/usuarios', (req, res) => {
   Usuario.findAll(
     {
-      include:[{
-        model:Roles,
-        as:"permiso",
-        attributes:[
-          'id','nombre'
+      include: [{
+        model: Roles,
+        as: "permiso",
+        attributes: [
+          'id', 'nombre'
         ]
       }],
-      attributes:['id','usuario','nombre','correo','telefono','direccion']
+      attributes: ['id', 'usuario', 'nombre', 'correo', 'telefono', 'direccion']
     }
   ).then(usuarios => {
-      res.json(usuarios);
+    res.json(usuarios);
   }).catch(error => {
-      res.send(error.message);
+    res.send(error.message);
   })
 })
 
 server.post('/register', validarUsuarioCorreo, validarUsuarioNombre, (req, res) => {
   Usuario.create({
-      usuario: req.body.usuario,
-      nombre:req.body.nombre,
-      correo: req.body.correo,
-      telefono: req.body.telefono,
-      direccion:req.body.direccion,
-      contrasena: req.body.contrasena
+    usuario: req.body.usuario,
+    nombre: req.body.nombre,
+    correo: req.body.correo,
+    telefono: req.body.telefono,
+    direccion: req.body.direccion,
+    contrasena: req.body.contrasena
   }).then(usuario => {
-      res.status(200).json({ usuario });
+    res.status(200).json({ usuario });
   }).catch(error => {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   });
 })
 
 //=============================================Fin endpoint Usuarios===================================== 
+
+
+const sumar= async (req, res, next) =>{
+  let array=[];
+  array=req.body.platos;
+}
+
+
+//======================Pedido====================
+server.post('/pedido',(req,res)=>{
+  Pedido.create({
+    precio_total: req.body.precio_total,
+    fecha: req.body.fecha,
+    estado: req.body.estado,
+    formas_pago: req.body.formas_pago,
+    usuarios_id: req.body.usuarios_id
+  }).then(pedido => {
+    res.status(200).json({pedido});
+  }).catch(error => {
+    res.status(400).json({ error: error.message });
+  });
+})
+
 
 
 
@@ -226,7 +233,7 @@ server.listen(PORT, () => {
 
   // Conectarse a la base de datos cuando levanta el servidor
   // force true: DROP TABLES (no queremos que reinicie las tablas constantemente!)
-  db.sync({ force: true}).then(() => {
+  db.sync({ force: false }).then(() => {
     console.log("Succesfully connected to database");
   }).catch(error => {
     console.log("Se ha producido un error: " + error);

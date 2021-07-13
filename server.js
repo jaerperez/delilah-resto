@@ -6,17 +6,19 @@ const expressJwt = require("express-jwt");
 const jwt = require("jsonwebtoken");
 
 //como se guarda en variables de entorno
-const secretJWT = "escribiralgomuyseguro1234-lbjnwef89h234234rbhjui";
+//const secretJWT = "escribiralgomuyseguro1234-lbjnwef89h234234rbhjui";
 const db = require('./database');
-require('./database/asociations');
+//require('./database/asociations');
+require('dotenv').config();
 
 const server = express();
-const PORT = 3000;
+const APP_PORT = process.env.APP_PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET;
 // instanciar modelos
-const Producto = require('./database/models/Producto');
-const Pedido = require('./database/models/Pedido');
-const Roles = require('./database/models/Roles');
-const Usuario = require('./database/models/Usuario');
+const { Producto, Pedido, Usuario, Roles, Pedidos_has_productos } = require("./database/models");
+
+// instanciar validaciones 
+const { ValidoAdmon, validarBodyProducto, validarBodyLogin, verificarLogin, validarUsuarioNombre, validarUsuarioCorreo,validarEstadoPedido } = require("./validations");
 
 // middlewares
 server.use(helmet());
@@ -25,7 +27,7 @@ server.use(compression());
 server.use(cors());
 server.use(
   expressJwt({
-    secret: secretJWT,
+    secret: JWT_SECRET,
     algorithms: ["HS256"],
   }).unless({
     path: ["/login", "/register"]
@@ -33,132 +35,18 @@ server.use(
 );
 
 
-//====================== Productos =====================//
-const validarBodyProducto = (req, res, next) => {
-  if (
-    !req.body.nombre ||
-    !req.body.precio ||
-    !req.body.activo ||
-    !req.body.imagen
-  ) {
-    res.status(400).json({
-      error: "Debe enviar los datos completos del producto",
-    });
-  } else {
-    next();
-  }
-}
+/* ==================== Endpoint usuarios ===================
+=========================================================================
+*/
 
-// POST Crear un nuevo producto
-server.post('/producto_nuevo', validarBodyProducto, (req, res) => {
-  Producto.create({
-    nombre: req.body.nombre,
-    precio: req.body.precio,
-    activo: req.body.activo,
-    imagen: req.body.imagen
-  }).then(producto => {
-    res.status(200).json({producto});
-  }).catch(error => {
-    res.status(400).json({ error: error.message });
-  })
-});
-
-// Consultar todos los productos
-server.get('/productos', (req, res) => {
-  Producto.findAll().then(productos => {
-    res.json(productos);
-  }).catch(error => {
-    res.send(error.message);
-  })
-})
-
-//Actualizar producto
-server.put('/productos/:id', (req, res) => {
-  Producto.update({
-    nombre: req.body.nombre,
-    precio: req.body.precio,
-    activo: req.body.activo,
-    imagen: req.body.imagen
-  },{
-    where: { id: req.params.id }
-  }).then(product => {
-    res.status(200).json({product});
-  }).catch(error => {
-    res.send(error.message);
-  })
-});
-
-//====================Usuarios ================//
-
-// validación body login
-const validarBodyLogin = (req, res, next) => {
-  if (
-    !req.body.correo ||
-    !req.body.contrasena
-  ) {
-    res.status(400).json({
-      error: "Debe loguearse con su correo y contraseña",
-    });
-  } else {
-    next();
-  }
-};
-
-
-const verificarLogin = async (req, res, next) => {
-  const loginOk = await Usuario.findOne({
-    where: {
-      correo: req.body.correo,
-      contrasena: req.body.contrasena
-    }
-  });
-
-  if (!loginOk) {
-    res.status(400).json({
-      error: "Credenciales incorrectas"
-    })
-  } else {
-    next();
-  }
-};
-
-// validación de usuario en DB (validar nombre y mail por separado)
-const validarUsuarioNombre = async (req, res, next) => {
-  const usuarioExistente = await Usuario.findOne({
-    where: {
-      usuario: req.body.usuario
-    }
-  });
-
-  if (usuarioExistente) {
-    res.status(409).json({ error: `El nombre pertenece a un usuario registrado` });
-  } else {
-    next();
-  }
-}
-
-const validarUsuarioCorreo = async (req, res, next) => {
-  const usuarioExistente = await Usuario.findOne({
-    where: {
-      correo: req.body.correo
-    }
-  });
-
-  if (usuarioExistente) {
-    res.status(409).json({ error: `Ya existe una cuenta registrada con el correo  correo` });
-  } else {
-    next();
-  }
-}
-
-
+//POST login de usuarios
 server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
   const token = jwt.sign(
     {
       usuario: req.body.usuario,
       correo: req.body.correo,
     },
-    secretJWT,
+    JWT_SECRET,
     { expiresIn: "60m" }
   );
   res.status(200).json({ token });
@@ -166,8 +54,8 @@ server.post('/login', validarBodyLogin, verificarLogin, (req, res) => {
 
 
 
-// GET Usuarios
-server.get('/usuarios', (req, res) => {
+// GET consulta de Usuarios
+server.get('/usuarios', ValidoAdmon, (req, res) => {
   Usuario.findAll(
     {
       include: [{
@@ -186,6 +74,8 @@ server.get('/usuarios', (req, res) => {
   })
 })
 
+
+//Post registro de nuevos usuarios 
 server.post('/register', validarUsuarioCorreo, validarUsuarioNombre, (req, res) => {
   Usuario.create({
     usuario: req.body.usuario,
@@ -201,35 +91,143 @@ server.post('/register', validarUsuarioCorreo, validarUsuarioNombre, (req, res) 
   });
 })
 
-//=============================================Fin endpoint Usuarios===================================== 
 
 
-const sumar= async (req, res, next) =>{
-  let array=[];
-  array=req.body.platos;
-}
+/* ====================== Endpoint productos =========================
+=========================================================================
+*/
 
-
-//======================Pedido====================
-server.post('/pedido',(req,res)=>{
-  Pedido.create({
-    precio_total: req.body.precio_total,
-    fecha: req.body.fecha,
-    estado: req.body.estado,
-    formas_pago: req.body.formas_pago,
-    usuarios_id: req.body.usuarios_id
-  }).then(pedido => {
-    res.status(200).json({pedido});
+// POST Crear un nuevo producto
+server.post('/producto_nuevo', validarBodyProducto, ValidoAdmon, (req, res) => {
+  Producto.create({
+    nombre: req.body.nombre,
+    precio: req.body.precio,
+    activo: req.body.activo,
+    imagen: req.body.imagen
+  }).then(producto => {
+    res.status(200).json({ producto });
   }).catch(error => {
     res.status(400).json({ error: error.message });
-  });
+  })
+});
+
+// GET Consultar todos los productos
+server.get('/productos', (req, res) => {
+  Producto.findAll().then(productos => {
+    res.json(productos);
+  }).catch(error => {
+    res.send(error.message);
+  })
 })
 
+//PUT Actualizar producto
+server.put('/productos/:id', ValidoAdmon, (req, res) => {
+  Producto.update({
+    nombre: req.body.nombre,
+    precio: req.body.precio,
+    activo: req.body.activo,
+    imagen: req.body.imagen
+  }, {
+    where: { id: req.params.id }
+  }).then(product => {
+    res.status(200).json({ product });
+  }).catch(error => {
+    res.send(error.message);
+  })
+});
+
+//DELETE eliminar producto, solo es un borrado lógico en donde 1 es activo y 0 es inactivo
+server.put('/productos/borrar/:id', ValidoAdmon, (req, res) => {
+  Producto.update({
+    activo: 0,
+  }, {
+    where: { id: req.params.id }
+  }).then(product => {
+    res.status(200).json({product});
+  }).catch(error => {
+    res.send(error.message);
+  })
+});
+
+
+/* ====================== Endpoint pedidos ===========================
+=========================================================================
+*/
+
+server.post('/NuevoPedido', async (req, res) => {
+  const { formas_pago, platos, usuarios_id } = req.body;
+  //Se completa los datos del plato con el precio 
+  const PlatosSolicitados = await Promise.all(
+    platos.map(async (plato) => {
+      const detallePlato = await Producto.findByPk(plato.id);
+      return {
+        cantidad: plato.cantidad,
+        precio: detallePlato.precio,
+        id: plato.id
+      };
+    })
+  );
+
+  //Se totaliza el valor del pedido sumando los platos
+  //const precio_total=PlatosSolicitados.reduce((nuevo, platos)=>{
+  //  return (nuevo+=parseFloat(platos.precio)*parseFloat(platos.cantidad));
+  //})
+
+  let precio_total = 0;
+
+  PlatosSolicitados.forEach((prod) => {
+    precio_total += parseFloat(prod.precio) * parseFloat(prod.cantidad);
+  });
+
+  // Se crea el pedido con los datos antes obtenidos
+  const NuevoPedido = await Pedido.create({
+    precio_total,
+    fecha: Date.now(),
+    formas_pago: formas_pago,
+    usuarios_id: usuarios_id
+  }).then(p => {
+    res.json(p);
+  }).catch(error => {
+    res.send(error.message);
+  });
+
+
+  res.json(NuevoPedido);
+  //Se crea el registro en la tabla intermedia 
+  await Promise.all(
+    PlatosSolicitados.map(async (prod) => {
+      const p = await Pedidos_has_productos.create(
+        {
+          pedidos_id: NuevoPedido.id,
+          productos_id: prod.id,
+          cantidad: prod.cantidad
+        },
+        {
+          fields: ['pedidos_id', 'productos_id', 'cantidad'],
+        }
+      );
+      console.log(p);
+    })
+  );
+});
+
+//Actualizar estado del pedido
+server.put('/pedido/:id', ValidoAdmon, validarEstadoPedido, (req, res) => {
+  Pedido.update({
+    estado: req.body.estado
+  }, {
+    where: { id: req.params.id }
+  }).then(ped => {
+    res.status(200).json({ ped });
+  }).catch(error => {
+    res.send(error.message);
+  })
+});
 
 
 
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+server.listen(APP_PORT, () => {
+  console.log(`Server listening on port ${APP_PORT}`);
 
   // Conectarse a la base de datos cuando levanta el servidor
   // force true: DROP TABLES (no queremos que reinicie las tablas constantemente!)

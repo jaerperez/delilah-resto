@@ -1,17 +1,39 @@
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../index');
+const Pedido = require("./Pedido");
+const Producto = require("./Producto");
 
-class Pedidos_has_productos extends Model {}
-Pedidos_has_productos.init({
-    pedidos_id: DataTypes.INTEGER,
-    productos_id:DataTypes.INTEGER,
-    cantidad:DataTypes.INTEGER
-}, 
-{ 
-    sequelize,
-    modelName: "pedidos_has_productos",
+const pedidos_has_productos = sequelize.define(
+  "pedidos_has_productos",
+  {
+    cantidad: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    pedidos_id: {
+      field: "pedidos_id",
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      references: {
+        model: Pedido,
+        key: "id",
+      },
+    },
+    productos_id: {
+      field: "productos_id",
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      references: {
+        model: Producto,
+        key: "id",
+      },
+    },
+  },
+  {
+    timestamps: false,
     tableName: "pedidos_has_productos",
-    timestamps: false
-})
+    underscored: true,
+  }
+);
 
-module.exports = Pedidos_has_productos;
+module.exports = pedidos_has_productos;

@@ -1,8 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../index');
 
-class Transaccion extends Model {}
-Transaccion.init({
+class Pedido extends Model {}
+Pedido.init({
     precio_total: DataTypes.INTEGER,
     fecha:DataTypes.DATE,
     estado: DataTypes.ENUM('NUEVO', 'PREPARANDO', 'CONFIRMADO', 'ENVIANDO', 'CANCELADO', 'ENTREGADO'),
@@ -16,4 +16,4 @@ Transaccion.init({
     timestamps: false
 })
 
-module.exports = Transaccion;
+module.exports = Pedido;

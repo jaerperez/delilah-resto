@@ -1,0 +1,328 @@
+{
+	"info": {
+		"_postman_id": "671540d7-4d96-40d5-a7e2-d17fa58432bb",
+		"name": "DELILAH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[Usuario] Registro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"usuario\": \"fulanito\",\r\n        \"nombre\": \"August\",\r\n        \"correo\": \"august@gmail.com\",\r\n        \"telefono\":\"314231232\",\r\n        \"direccion\":\"Calle 23 23 12\",\r\n        \"contrasena\": \"aug10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Usuario] Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"correo\": \"jsha@gmail.com\",\r\n        \"contrasena\": \"U5uar10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Usuario] Consultar Usuarios",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjExNTg3NywiZXhwIjoxNjI2MTE5NDc3fQ.GD4u2H37Xcr62CZm1vFBoFSeO4Fxf0deKhxfwuVSJKM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"user\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/usuarios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Producto] Consultar",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3003/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Producto] Actualizar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNDgzNjA5OSwiZXhwIjoxNjI0ODM5Njk5fQ.PdHN6prhj58RzAFCalvXW3xPwXuikNTdoZpHqdLtEiw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/producto_act/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"producto_act",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Producto] Nuevo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/producto_nuevo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"producto_nuevo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Producto] Borrado Lógico",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjExNDIxOSwiZXhwIjoxNjI2MTE3ODE5fQ.JKkQ7HIm-Oif0ySLSWqfGvjBATw0mbLRLTl8CvOndtc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"user\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/productos/borrar/11",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"productos",
+						"borrar",
+						"11"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Pedidos] Consultar",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/pedidos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"pedidos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Pedidos] Nuevo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjAzMzQ1NSwiZXhwIjoxNjI2MDM3MDU1fQ.t3-SzojGlj1tMT0wG4BvCfP2diHJzY1qsMA7cGNkkhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"formas_pago\": \"3\",\r\n        \"usuarios_id\": \"2\",\r\n        \"platos\": [{\r\n            \"id\": 2,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"cantidad\": 5\r\n        }]\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/NuevoPedido",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"NuevoPedido"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Pedidos] Actualizar Estado",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjExOTYxNSwiZXhwIjoxNjI2MTIzMjE1fQ.8HcUB8VtfAQJKiAVDNQj-fanRejY6uPtJ3ISXyBlpco",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"user\": 1,\r\n        \"estado\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/pedido/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"pedido",
+						"6"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

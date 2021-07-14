@@ -1,0 +1,463 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": 'Proyecto Delilah del tercer corte en acámica ',
+    "version": 1.0.1,
+    "title": "Swagger Delilah",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "jaerperez@gmail.com"
+    }
+  },
+  "host": "virtserver.swaggerhub.com",
+  "basePath": "/jaerperez/delilah/1",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+      "/login": {
+       "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Ingreso de los usuarios al sistema",
+        "operationId": "login",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "usuario",
+            "in": "query",
+            "description": "Nombre de usuario para login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "correo",
+            "in": "query",
+            "description": "Correo electrónico para login",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "validarBodyLogin": {
+                "type": "string",
+                "format": "string",
+                "description": "Faltan datos por suministrar"
+              },
+              "verificarLogin": {
+                "type": "string",
+                "format": "string",
+                "description": "Usuario/correo incorrecto"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "200": {
+            "description": "Operación exitosa retorna el token"
+          }
+        }
+      }
+    },
+    
+    "/usuarios": {
+       "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Consulta de todos los usuarios del sistema",
+        "operationId": "Consultar",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "ValidoAdmon": {
+                "type": "string",
+                "format": "string",
+                "description": "Acceso denegado"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "200": {
+            "description": "Retorna listado de usuarios"
+          }
+        }
+      }
+    },
+      "/register": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Crear nuevo usuario",
+        "description": "Se registran los nuevo usuarios del sistema",
+        "operationId": "crear",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    
+    "/producto_nuevo": {
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Crear nuevo producto",
+        "description": "Se regustran los nuevo productos a comercializar en el sistema",
+        "operationId": "crearprod",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Crear producto object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producto"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    
+    "/productos": {
+       "get": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Consulta de todos los productos del sistema",
+        "operationId": "Consultarprod",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            },
+          "200": {
+            "description": "Retorna listado de usuarios"
+          }
+        }
+      }
+    },
+    
+    "/producto/{id}": {
+      "put": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Actualización de productos",
+        "description": "Se puede actualizar el producto",
+        "operationId": "actualizarprod",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id del producto actualizar",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Actualiza datos del producto",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producto"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "ValidoAdmon": {
+                "type": "string",
+                "format": "string",
+                "description": "Acceso denegado"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Retorna los datos del producto actualizado"
+          }
+        }
+      }
+    },
+    
+    "/productos/borrar/{id}": {
+      "put": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Actualización de productos",
+        "description": "Se puede actualizar el producto",
+        "operationId": "borrarprod",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id del producto para cambiar el estado",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Actualiza el estado del producto a 0",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producto"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "ValidoAdmon": {
+                "type": "string",
+                "format": "string",
+                "description": "Acceso denegado"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Retorna los datos del producto actualizado"
+          }
+        }
+      }
+    },
+    
+    "/NuevoPedido": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Crear nuevo producto",
+        "description": "Se regustran los nuevo productos a comercializar en el sistema",
+        "operationId": "crearpedido",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Crear producto object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pedido"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/pedido/{id}": {
+      "put": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Actualización de pedido",
+        "description": "Se puede actualizar el pedido",
+        "operationId": "actualizapedido",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id del pedido para actualizar",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Actualiza pedido",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pedido"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "ValidoAdmon": {
+                "type": "string",
+                "format": "string",
+                "description": "Acceso denegado"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Retorna los datos del pedido actualizado"
+          }
+        }
+      }
+    },
+    
+    
+  },
+
+  "definitions": {
+     "Usuario": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "usuario": {
+          "type": "string"
+        },
+        "nombre": {
+          "type": "string"
+        },
+        "correo": {
+          "type": "string"
+        },
+        "teléfono": {
+          "type": "string"
+        },
+        "direccion": {
+          "type": "string"
+        },
+        "contrasena": {
+          "type": "string"
+        },
+        "rols_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Tipo de rol que tiene el usuario"
+        }
+      },
+      "xml": {
+        "name": "Usuario"
+      }
+    },
+     "Producto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nombre": {
+          "type": "string"
+        },
+        "precio": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "activo": {
+          "type": "boolean"
+        },
+        "imagen": {
+          "type": "string"
+        },
+      },
+      "xml": {
+        "name": "Producto"
+      }
+    },
+    "Pedido": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "precio_total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "fecha": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "estado": {
+          "type": "boolean"
+        },
+        "usuarios_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+      },
+      "xml": {
+        "name": "Pedido"
+      }
+    },
+
+  }
+}

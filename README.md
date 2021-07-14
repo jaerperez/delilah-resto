@@ -1,4 +1,4 @@
-# delilah-resto
+# Delilah-resto
 
 Instrucciones para visualizar:
 

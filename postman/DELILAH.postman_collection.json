@@ -72,7 +72,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjExNTg3NywiZXhwIjoxNjI2MTE5NDc3fQ.GD4u2H37Xcr62CZm1vFBoFSeO4Fxf0deKhxfwuVSJKM",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0ODI1OCwiZXhwIjoxNjI2NDUxODU4fQ.Tlv1OfuUb8fyvYc1PTdoHCDoKW5-X32pCcRd48QbxOw",
 							"type": "string"
 						}
 					]
@@ -81,7 +81,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"user\": 2\r\n}",
+					"raw": "{\r\n        \"user\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -105,15 +105,25 @@
 		{
 			"name": "[Producto] Consultar",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0ODI1OCwiZXhwIjoxNjI2NDUxODU4fQ.Tlv1OfuUb8fyvYc1PTdoHCDoKW5-X32pCcRd48QbxOw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3003/productos",
+					"raw": "http://localhost:3000/productos",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3003",
+					"port": "3000",
 					"path": [
 						"productos"
 					]
@@ -129,7 +139,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNDgzNjA5OSwiZXhwIjoxNjI0ODM5Njk5fQ.PdHN6prhj58RzAFCalvXW3xPwXuikNTdoZpHqdLtEiw",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0ODI1OCwiZXhwIjoxNjI2NDUxODU4fQ.Tlv1OfuUb8fyvYc1PTdoHCDoKW5-X32pCcRd48QbxOw",
 							"type": "string"
 						}
 					]
@@ -138,7 +148,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\"\r\n}",
+					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\",\r\n        \"user\":1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -146,14 +156,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/producto_act/1",
+					"raw": "http://localhost:3000/productos/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"producto_act",
+						"productos",
 						"1"
 					]
 				}
@@ -163,11 +173,21 @@
 		{
 			"name": "[Producto] Nuevo",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0ODYyMSwiZXhwIjoxNjI2NDUyMjIxfQ.mA6ixNe5taIv83K_HoZoo1KDmqXddSZvA9637fDUIr8",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\"\r\n}",
+					"raw": "{\r\n        \"nombre\": \"Fritanga o Picada\",\r\n        \"precio\": 230,\r\n        \"activo\": 1,\r\n        \"imagen\":\"https://tipsparatuviaje.com/wp-content/uploads/2019/07/fritanga-o-picada-1.jpg\",\r\n        \"user\":1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -255,7 +275,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjAzMzQ1NSwiZXhwIjoxNjI2MDM3MDU1fQ.t3-SzojGlj1tMT0wG4BvCfP2diHJzY1qsMA7cGNkkhA",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0NDkxNCwiZXhwIjoxNjI2NDQ4NTE0fQ.PWwSXjd5mU85W8unWoraVTWHq6tfUoKyLPgqKMPkrP0",
 							"type": "string"
 						}
 					]
@@ -264,7 +284,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"formas_pago\": \"3\",\r\n        \"usuarios_id\": \"2\",\r\n        \"platos\": [{\r\n            \"id\": 2,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": 4,\r\n            \"cantidad\": 5\r\n        }]\r\n\r\n}",
+					"raw": "{\r\n        \"formas_pago\": \"3\",\r\n        \"usuarios_id\": \"8\",\r\n        \"platos\": [{\r\n            \"id\": 5,\r\n            \"cantidad\": 3\r\n        },\r\n        {\r\n            \"id\": 9,\r\n            \"cantidad\": 5\r\n        }]\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -319,6 +339,37 @@
 					"path": [
 						"pedido",
 						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Pedidos] Eliminar pedido",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb3JyZW8iOiJqc2hhQGdtYWlsLmNvbSIsImlhdCI6MTYyNjQ0ODYyMSwiZXhwIjoxNjI2NDUyMjIxfQ.mA6ixNe5taIv83K_HoZoo1KDmqXddSZvA9637fDUIr8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/pedido/borrar/57",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"pedido",
+						"borrar",
+						"57"
 					]
 				}
 			},

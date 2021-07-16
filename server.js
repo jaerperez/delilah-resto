@@ -18,7 +18,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const { Producto, Pedido, Usuario, Roles, Pedidos_has_productos } = require("./database/models");
 
 // instanciar validaciones 
-const { ValidoAdmon, validarBodyProducto, validarBodyLogin, verificarLogin, validarUsuarioNombre, validarUsuarioCorreo,validarEstadoPedido } = require("./validations");
+const { ValidoAdmon, validarBodyProducto, validarBodyLogin, verificarLogin, validarUsuarioNombre, validarUsuarioCorreo, validarEstadoPedido, validarIdPedido } = require("./validations");
 
 // middlewares
 server.use(helmet());
@@ -33,7 +33,6 @@ server.use(
     path: ["/login", "/register"]
   })
 );
-
 
 /* ==================== Endpoint usuarios ===================
 =========================================================================
@@ -143,7 +142,7 @@ server.put('/productos/borrar/:id', ValidoAdmon, (req, res) => {
   }, {
     where: { id: req.params.id }
   }).then(product => {
-    res.status(200).json({product});
+    res.status(200).json({ product });
   }).catch(error => {
     res.send(error.message);
   })
@@ -153,7 +152,7 @@ server.put('/productos/borrar/:id', ValidoAdmon, (req, res) => {
 /* ====================== Endpoint pedidos ===========================
 =========================================================================
 */
-
+//crear nuevo pedido
 server.post('/NuevoPedido', async (req, res) => {
   const { formas_pago, platos, usuarios_id } = req.body;
   //Se completa los datos del plato con el precio 
@@ -180,35 +179,37 @@ server.post('/NuevoPedido', async (req, res) => {
   });
 
   // Se crea el pedido con los datos antes obtenidos
-  const NuevoPedido = await Pedido.create({
-    precio_total,
-    fecha: Date.now(),
-    formas_pago: formas_pago,
-    usuarios_id: usuarios_id
-  }).then(p => {
-    res.json(p);
-  }).catch(error => {
-    res.send(error.message);
-  });
+    const NuevoPedido = await Pedido.create({
+      precio_total,
+      fecha: Date.now(),
+      formas_pago: formas_pago,
+      usuarios_id: usuarios_id
+    })
+
+    const id=NuevoPedido.id;
+
+    console.log(NuevoPedido);
+
+
+    //Se crea el registro en la tabla intermedia 
+    await Promise.all(
+      PlatosSolicitados.map(async (prod) => {
+        const p = await Pedidos_has_productos.create(
+          {
+            pedidos_id: id,
+            productos_id: prod.id,
+            cantidad: prod.cantidad
+          },
+          {
+            fields: ['pedidos_id', 'productos_id', 'cantidad'],
+          }
+        );
+        console.log(p);
+      })
+    );
 
 
   res.json(NuevoPedido);
-  //Se crea el registro en la tabla intermedia 
-  await Promise.all(
-    PlatosSolicitados.map(async (prod) => {
-      const p = await Pedidos_has_productos.create(
-        {
-          pedidos_id: NuevoPedido.id,
-          productos_id: prod.id,
-          cantidad: prod.cantidad
-        },
-        {
-          fields: ['pedidos_id', 'productos_id', 'cantidad'],
-        }
-      );
-      console.log(p);
-    })
-  );
 });
 
 //Actualizar estado del pedido
@@ -223,6 +224,40 @@ server.put('/pedido/:id', ValidoAdmon, validarEstadoPedido, (req, res) => {
     res.send(error.message);
   })
 });
+
+// GET Consultar todos los pedidos
+server.get('/pedidos', (req, res) => {
+  Pedido.findAll().then(ped => {
+    res.json(ped);
+  }).catch(error => {
+    res.send(error.message);
+  })
+})
+
+//Borrar pedido 
+server.delete('/pedido/borrar/:id', validarIdPedido, async (req, res) => {
+
+  await Pedidos_has_productos.destroy({
+    where: {
+      pedidos_id: req.params.id
+    }
+  }).then(ped => {
+    res.status(200).json({ message: "Listado de productos eliminados del pedido" + ped });
+  }).catch(error => {
+    res.send(error.message);
+  });
+
+  await Pedido.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then(ped => {
+    res.status(200).json({ message: "Pedido eliminado exitosamente" });
+  }).catch(error => {
+    res.send(error.message);
+  });
+});
+
 
 
 

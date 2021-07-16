@@ -38,7 +38,7 @@ const validarBodyLogin = (req, res, next) => {
     !req.body.contrasena
   ) {
     res.status(400).json({
-      error: "Debe loguearse con su correo y contraseña",
+      error: "Faltan datos por suministrar",
     });
   } else {
     next();
@@ -56,7 +56,7 @@ const verificarLogin = async (req, res, next) => {
 
   if (!loginOk) {
     res.status(400).json({
-      error: "Credenciales incorrectas"
+      error: "Usuario/correo incorrecto"
     })
   } else {
     next();
@@ -114,7 +114,6 @@ const validarUsuarioCorreo = async (req, res, next) => {
 /* ==================== Validaciones para pedidos ===================
 =========================================================================
 */
-
 const validarEstadoPedido = (req, res, next) => {
   const estado = req.body.estado;
   if (estado == 1 || estado == 2 || estado == 3 || estado == 4 || estado == 5 || estado == 6) {
@@ -122,10 +121,26 @@ const validarEstadoPedido = (req, res, next) => {
     next();
   } else {
     res.status(400).json({ error: "Estado incorrecto" });
-    
   }
+}
+
+//Valida si existe el código del pedido a eliminar
+const validarIdPedido =async(req, res, next)=>{
+  const pedidoExistente = await Pedido.findOne({
+    where: {
+      id: req.params.id
+    }
+  });
+
+  if (!pedidoExistente) {
+    res.status(409).json({ error: `El pedido a eliminar no existe por favor validar` });
+  } else {
+    next();
+  }
+
 }
 
 
 
-module.exports = { ValidoAdmon, validarBodyProducto, validarBodyLogin, verificarLogin, validarUsuarioNombre, validarUsuarioCorreo, validarEstadoPedido,validarEstadoPedido };
+
+module.exports = { ValidoAdmon, validarBodyProducto, validarBodyLogin, verificarLogin, validarUsuarioNombre, validarUsuarioCorreo, validarEstadoPedido,validarEstadoPedido,validarIdPedido };

@@ -235,7 +235,7 @@ server.get('/pedidos', (req, res) => {
 })
 
 //Borrar pedido 
-server.delete('/pedido/borrar/:id', validarIdPedido, async (req, res) => {
+server.delete('/pedido/borrar/:id', validarIdPedido, ValidoAdmon, async (req, res) => {
 
   await Pedidos_has_productos.destroy({
     where: {

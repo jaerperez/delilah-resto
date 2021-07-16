@@ -359,8 +359,17 @@
 				},
 				"method": "DELETE",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"user\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:3000/pedido/borrar/57",
+					"raw": "http://localhost:3000/pedido/borrar/55",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -369,7 +378,7 @@
 					"path": [
 						"pedido",
 						"borrar",
-						"57"
+						"55"
 					]
 				}
 			},

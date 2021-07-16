@@ -366,7 +366,47 @@
         }
       }
     },
-    
+    "/pedido/borrar/{id}": {
+      "delete": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Eliminado de pedido",
+        "description": "Se elimina la lista de productos asociados al pedido y también el pedido",
+        "operationId": "borrarped",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id del pedido para borrarlo",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operación fallida",
+            "headers": {
+              "ValidoAdmon": {
+                "type": "string",
+                "format": "string",
+                "description": "Acceso denegado"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Retorna los datos del producto actualizado"
+          }
+        }
+      }
+    },
     
   },
 
